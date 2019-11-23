@@ -12,7 +12,7 @@ const _validateN = n => {
     }
 };
 
-const formatItem = ({title, author, uri, points, comments}, rank) => {
+const _formatItem = ({title, author, uri, points, comments}, rank) => {
     return {
         title,
         author,
@@ -23,25 +23,24 @@ const formatItem = ({title, author, uri, points, comments}, rank) => {
     };
 };
 
-const showTopNStories = async n => {
+const _getTopNStories = async n => {
     _validateN(n);
 
     const hackernews = new Hackernews();
 
     const topNStoriesIds = (await hackernews.getTopStories()).slice(0, n);
-    const topNStories = await Promise.all(topNStoriesIds.map(
-        async (id, index) => formatItem(await hackernews.getItem(id), index + 1)
+    return await Promise.all(topNStoriesIds.map(
+        async (id, index) => _formatItem(await hackernews.getItem(id), index + 1)
     ));
-
-    console.log(JSON.stringify(topNStories, null, 4));
 };
 
 const cmds = {
-    '--posts': showTopNStories,
+    '--posts': async (n) => console.log(JSON.stringify(await _getTopNStories(n), null, 4)),
 };
 
 module.exports = {
     _validateN,
-    showTopNStories,
+    _formatItem,
+    _getTopNStories,
     cmds,
 };
