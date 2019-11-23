@@ -2,7 +2,10 @@ const {
     _validateN,
     _formatItem,
     _getTopNStories,
-} = require("../src/cmds");
+} = require('../src/cmds');
+
+const Hackernews = require('../lib/hackernews');
+const hackernews = new Hackernews();
 
 describe('lib', () => {
 
@@ -38,7 +41,7 @@ describe('lib', () => {
                 uri: 'https://www.oversaid.com'
             };
             const rank = 10;
-            const keys =  ["title", "url", "by", "score", "descendants"];
+            const keys =  ['title', 'uri', 'author', 'comments', 'points'];
 
             let formattedItem;
 
@@ -55,4 +58,30 @@ describe('lib', () => {
 
     });
 
+    describe('_getTopNStories', () => {
+
+        describe('when it successfully get the top n stories', () => {
+            const expectedFields = ['title', 'uri', 'author', 'comments', 'points'];
+            let rawResponse;
+            const ids = [
+                21572573,
+                21569610,
+                21567556,
+            ];
+
+            beforeAll(async () => {
+                rawResponse = await _getTopNStories(hackernews, ids);
+            }, 30000);
+
+            it('return an array with the same length as the ids', () =>
+                expect(rawResponse.length).toEqual(ids.length));
+
+            it('reponse objects have the expected fields', () =>
+                rawResponse.forEach(res => {
+                    let keys = Object.keys(res);
+                    expectedFields.forEach(field => expect(keys.includes(field)).toEqual(true));
+                }));
+        });
+
+    });
 });
