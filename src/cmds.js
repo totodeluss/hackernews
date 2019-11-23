@@ -12,7 +12,7 @@ const _validateN = n => {
     }
 };
 
-const formatStory = ({title, author, uri, points, comments}, rank) => {
+const formatItem = ({title, author, uri, points, comments}, rank) => {
     return {
         title,
         author,
@@ -21,7 +21,7 @@ const formatStory = ({title, author, uri, points, comments}, rank) => {
         comments,
         rank,
     };
-}
+};
 
 const showTopNStories = async n => {
     _validateN(n);
@@ -30,11 +30,11 @@ const showTopNStories = async n => {
 
     const topNStoriesIds = (await hackernews.getTopStories()).slice(0, n);
     const topNStories = await Promise.all(topNStoriesIds.map(
-        async (id, index) => formatStory(await hackernews.getStory(id), index + 1)
+        async (id, index) => formatItem(await hackernews.getItem(id), index + 1)
     ));
 
     console.log(JSON.stringify(topNStories, null, 4));
-}
+};
 
 const cmds = {
     '--posts': showTopNStories,
